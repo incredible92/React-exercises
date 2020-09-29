@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
 
-function App() {
+export const generatedID = () => Math.random().toString(36).substring(2, 6);
+
+const App = () => {
+  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [newName, setNewName] = useState("");
+
+  const addNewName = (e) => {
+    e.preventDefault();
+    const newInput = {};
+    setPersons((persons) =>
+      persons.concat({
+        Id: generatedID(),
+        name: newName,
+      })
+    );
+    setNewName("");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Phonebook</h2>
+      <form onSubmit={(e) => addNewName(e)}>
+        <div>
+          name:{" "}
+          <input value={newName} onChange={(e) => setNewName(e.target.value)} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      <p>
+        {persons.map((person) => (
+          <p key={person.id}>{person.name}</p>
+        ))}
+      </p>
     </div>
   );
-}
+};
 
 export default App;
