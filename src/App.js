@@ -1,27 +1,38 @@
 import React, { useState } from "react";
 
-export const generatedID = () => Math.random().toString(36).substring(2, 6);
+export const generateId = () => Math.random().toString(36).substring(2, 6);
 
 const App = () => {
   const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
   const [newName, setNewName] = useState("");
 
-  const addNewName = (e) => {
+  const addName = (e) => {
     e.preventDefault();
-    const newInput = {};
-    setPersons((persons) =>
-      persons.concat({
-        Id: generatedID(),
-        name: newName,
+
+    if (
+      Object.keys(persons).some((personId) => {
+        const person = persons[personId];
+        return person.name.toLowerCase() === newName.trim().toLowerCase();
       })
-    );
+    ) {
+      setNewName("");
+      return window.alert(`${newName} is already added to phonebook`);
+    }
+
+    const newInput = {};
+    newInput[generateId()] = {
+      name: newName,
+    };
+    setPersons({
+      ...persons,
+      ...newInput,
+    });
     setNewName("");
   };
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={(e) => addNewName(e)}>
+      <form onSubmit={(e) => addName(e)}>
         <div>
           name:{" "}
           <input value={newName} onChange={(e) => setNewName(e.target.value)} />
@@ -32,9 +43,10 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <p>
-        {persons.map((person) => (
-          <p key={person.id}>{person.name}</p>
-        ))}
+        {Object.keys(persons).map((personId) => {
+          const person = persons[personId];
+          return <p key={personId}>{person.name}</p>;
+        })}
       </p>
     </div>
   );
